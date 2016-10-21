@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <repositories>
+
+        <repository>
+            <id>JBoss repository</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+        <repository>
+            <id>Jahia repository</id>
+            <url>http://maven.jahia.org/maven2/</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <downloadUrl>http://mojo.codehaus.org/my-project</downloadUrl>
+    </distributionManagement>
+    <modelVersion>4.0.0</modelVersion>
+  <groupId>ch.tcs.othfw</groupId>
+  <artifactId>framework_poc</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>framework_poc Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>2.2.1.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>1.5-20090211</version>
+        </dependency>
+    </dependencies>
+    <build>
+      <plugins>
+        <plugin>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <version>9.2.11.v20150529</version>
+        </plugin>
+      </plugins>
+      <finalName>framework_poc</finalName>
+  </build>
+</project>
