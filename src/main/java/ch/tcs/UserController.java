@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
     /**
-     * A class to test interactions with the MySQL database using the UserDao class.
+     * A class to test interactions with the MySQL database using a REST service.
      *
      * @author OTH a
      */
