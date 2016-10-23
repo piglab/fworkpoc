@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.core.Application;
 
-public class MessageApplication extends Application
+public class MessageApplication extends Application //oth
 {
     private Set<Object> singletons = new HashSet<Object>();
 
