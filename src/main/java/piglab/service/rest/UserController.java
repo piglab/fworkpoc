@@ -1,10 +1,9 @@
 package piglab.service.rest;
 
-/**
- * Created by thomas on 23/10/2016.
- */
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -14,14 +13,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
      * @author OTH a
      */
     @Controller
+    @SuppressWarnings("unused")
     public class UserController {
 
-        @Autowired
+
         private UserDao userDao;
 
-        // ------------------------
-        // PUBLIC METHODS
-        // ------------------------
+        @Autowired
+        public UserController(UserDao dao)
+        {
+            Assert.notNull(dao, "userdao cannot be null");
+            this.userDao=dao;
+        }
 
         /**
          * /create  --> Create a new user and save it in the database.
@@ -33,9 +36,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
         @RequestMapping("/create")
         @ResponseBody
         public String create(String email, String name) {
-            User user = null;
-            try {
-                user = new User(email, name);
+            User user = new User();
+            try
+            {
+                user.setEmail(email);
+                user.setLastname(name);
                 userDao.save(user);
             }
             catch (Exception ex) {
@@ -52,7 +57,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
          */
         @RequestMapping("/delete")
         @ResponseBody
-        public String delete(long id) {
+        String delete(long id) {
             try {
                 User user = new User(id);
                 userDao.delete(user);
@@ -98,7 +103,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
             try {
                 User user = userDao.findOne(id);
                 user.setEmail(email);
-                user.setName(name);
+                user.setLastname(name);
                 userDao.save(user);
             }
             catch (Exception ex) {
