@@ -1,6 +1,8 @@
 package piglab.service.rest;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,12 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.*;
 
     /**
      * A class to test interactions with the MySQL database using a REST service.
@@ -47,24 +44,32 @@ import org.slf4j.LoggerFactory;
          * @return A HTTP response. status CREATED if OK - status 400 BAD REQUEST if Exception occurs
          */
         @RequestMapping(method = RequestMethod.POST, value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity createUser(@RequestBody User user)
+        public ResponseEntity<User> createUser(@RequestBody User user) throws Exception
         {
             HttpHeaders headers = new HttpHeaders();
             try
             {
-                userDao.save(user);
+                User u2 = userDao.save(user);
+                logger.debug("user created : "+u2.getId());
+                return new ResponseEntity<User>(u2, HttpStatus.CREATED);
             }
             catch (Exception e)
             {
-                logger.error(e.toString());
-                headers.set("message",e.toString());
-                return new ResponseEntity<Void>(headers, HttpStatus.BAD_REQUEST);
+                Exception e2 = new Exception(user.getEmail()+"--------"+e.toString());
+                throw e2;
             }
-            logger.debug("user created : "+user.toString());
-            return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
-            //return "User succesfully created! (id = " + user.getId() + ")";
         }
 
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity conflict(Exception e)
+        {
+            logger.error(e.toString());
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("mymessage",e.toString());
+            headers.set("user","toto");
+            return new ResponseEntity<Void>(headers, HttpStatus.BAD_REQUEST);
+        }
 
 
 
