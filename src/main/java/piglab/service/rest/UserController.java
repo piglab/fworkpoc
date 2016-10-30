@@ -2,52 +2,69 @@ package piglab.service.rest;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
     /**
      * A class to test interactions with the MySQL database using a REST service.
-     *
-     * @author OTH a
+     * Annotation @Controller makes this class a Spring controller = request handler coming from DispatcherServlet
+     * @author OTH
      */
-    @Controller
-    @SuppressWarnings("unused")
-    public class UserController {
+    @Controller // Yes, this is a MVC controller
+    @SuppressWarnings("unused") //do not display Method Unused warning in case of MVC Controller
+    public class UserController
+    {
+        //DAO declaration. set by Spring Dependency injection in Constructor
+        private UserDao userDao=null;
 
-
-        private UserDao userDao;
-
-        @Autowired
+        /**
+        * Constructor - Spring DI : only one constructor may be annotated Autowired
+        */
+        @Autowired // let Spring find the interface implementation
         public UserController(UserDao dao)
         {
+            //make sure dao is not null or throw Exception
             Assert.notNull(dao, "userdao cannot be null");
             this.userDao=dao;
         }
 
         /**
-         * /create  --> Create a new user and save it in the database.
-         *
-         * @param email User's email
-         * @param name User's name
+         * /create  --> Create a new user and save it in JPA repository
+         * @param user user object mapped by Spring from json
          * @return A string describing if the user is succesfully created or not.
          */
-        @RequestMapping("/create")
-        @ResponseBody
-        public String create(String email, String name) {
-            User user = new User();
+        @RequestMapping(method = RequestMethod.POST, value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity createUser(@RequestBody User user)
+        {
+            HttpHeaders headers = new HttpHeaders();
+            System.out.print("aaaaaaaaaaaaaaa");
             try
             {
-                user.setEmail(email);
-                user.setLastname(name);
                 userDao.save(user);
             }
-            catch (Exception ex) {
-                return "Error creating the user: " + ex.toString();
+            catch (Exception ex)
+            {
+                //return "Error creating the user: " + ex.toString();
+                headers.set("message",ex.toString());
+                return new ResponseEntity<Void>(headers, HttpStatus.BAD_REQUEST);
             }
-            return "User succesfully created! (id = " + user.getId() + ")";
+            return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+            //return "User succesfully created! (id = " + user.getId() + ")";
         }
+
+
+
+
+
+
 
         /**
          * /delete  --> Delete the user having the passed id.
