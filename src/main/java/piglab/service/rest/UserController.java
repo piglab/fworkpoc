@@ -39,20 +39,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
         /**
          * /create  --> Create a new user and save it in JPA repository
          * @param user user object mapped by Spring from json
-         * @return A string describing if the user is succesfully created or not.
+         * @return A HTTP response. status CREATED if OK - status 400 BAD REQUEST if Exception occurs
          */
         @RequestMapping(method = RequestMethod.POST, value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity createUser(@RequestBody User user)
         {
             HttpHeaders headers = new HttpHeaders();
-            System.out.print("aaaaaaaaaaaaaaa");
             try
             {
                 userDao.save(user);
             }
             catch (Exception ex)
             {
-                //return "Error creating the user: " + ex.toString();
                 headers.set("message",ex.toString());
                 return new ResponseEntity<Void>(headers, HttpStatus.BAD_REQUEST);
             }
