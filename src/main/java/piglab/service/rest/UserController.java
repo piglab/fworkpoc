@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
     /**
      * A class to test interactions with the MySQL database using a REST service.
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
     @SuppressWarnings("unused") //do not display Method Unused warning in case of MVC Controller
     public class UserController
     {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
         //DAO declaration. set by Spring Dependency injection in Constructor
         private UserDao userDao=null;
 
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
             //make sure dao is not null or throw Exception
             Assert.notNull(dao, "userdao cannot be null");
             this.userDao=dao;
+            logger.debug("constructor OK");
         }
 
         /**
@@ -49,11 +54,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
             {
                 userDao.save(user);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                headers.set("message",ex.toString());
+                logger.error(e.toString());
+                headers.set("message",e.toString());
                 return new ResponseEntity<Void>(headers, HttpStatus.BAD_REQUEST);
             }
+            logger.debug("user created : "+user.toString());
             return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
             //return "User succesfully created! (id = " + user.getId() + ")";
         }
